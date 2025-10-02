@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from app.core.config import settings
+from app.core import config
 from app.api.endpoints import products
 
 def create_application() -> FastAPI:
@@ -8,11 +8,11 @@ def create_application() -> FastAPI:
     Factory function para crear la aplicación FastAPI.
     """
     app = FastAPI(
-        title=settings.app_name,
-        version=settings.api_version,
-        description="API REST INFO1189 - Implementa principios REST y Clean Architecture",
-        docs_url="/docs",  # Documentación automática en /docs
-        redoc_url="/redoc"  # Documentación alternativa en /redoc
+    title=config.APP_NAME,
+    version=config.API_VERSION,
+    description="API REST para evaluación INFO1189 - Implementa principios REST y Clean Architecture",
+    docs_url="/docs",
+    redoc_url="/redoc"
     )
     
     # Configurar CORS (Cross-Origin Resource Sharing)
@@ -26,9 +26,9 @@ def create_application() -> FastAPI:
     
     # Incluir routers de endpoints
     app.include_router(
-        products.router,
-        prefix=f"/api/{settings.api_version}",
-        tags=["products"]
+    products.router,
+    prefix=f"/api/{config.API_VERSION}",
+    tags=["products"]
     )
     
     return app
@@ -44,16 +44,16 @@ async def root():
     """
     return {
         "message": "API REST - Evaluación INFO1189",
-        "version": settings.api_version,
+        "version": config.API_VERSION,
         "docs": "/docs",
         "redoc": "/redoc",
         "endpoints": {
-            "products": f"/api/{settings.api_version}/products",
-            "health": f"/api/{settings.api_version}/health"
+            "products": f"/api/{config.API_VERSION}/products",
+            "health": f"/api/{config.API_VERSION}/health"
         }
     }
 
-@app.get(f"/api/{settings.api_version}/health")
+@app.get(f"/api/{config.API_VERSION}/health")
 async def health_check():
     """
     Endpoint de health check.
@@ -62,7 +62,7 @@ async def health_check():
     return {
         "status": "healthy",
         "timestamp": "2024-10-01T00:00:00Z",
-        "version": settings.api_version
+        "version": config.API_VERSION
     }
 
 if __name__ == "__main__":
@@ -71,5 +71,5 @@ if __name__ == "__main__":
         "app.main:app",
         host="0.0.0.0",
         port=8000,
-        reload=settings.debug
+        reload=config.DEBUG
     )

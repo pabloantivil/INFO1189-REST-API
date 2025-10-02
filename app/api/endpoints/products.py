@@ -22,7 +22,6 @@ async def obtener_producto_por_id(product_id: int):
             status_code=404, 
             detail=f"Producto con ID {product_id} no encontrado"
         )
-    
     return producto
 
 # ENDPOINT 3: POST /products - Crear un nuevo producto

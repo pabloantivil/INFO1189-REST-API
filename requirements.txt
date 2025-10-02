@@ -6,3 +6,4 @@ passlib[bcrypt]
 python-multipart
 strawberry-graphql[fastapi]
 pydantic-settings
+python-dotenv
