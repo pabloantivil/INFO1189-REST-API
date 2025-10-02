@@ -1,18 +1,20 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from app.core import config
-from app.api.endpoints import products
+from app.api.rest.endpoints import products
+from app.api.graphql.queries.product_queries import schema_graphql
+from strawberry.fastapi import GraphQLRouter
 
 def create_application() -> FastAPI:
     """
     Factory function para crear la aplicación FastAPI.
     """
     app = FastAPI(
-    title=config.APP_NAME,
-    version=config.API_VERSION,
-    description="API REST para evaluación INFO1189 - Implementa principios REST y Clean Architecture",
-    docs_url="/docs",
-    redoc_url="/redoc"
+        title=config.APP_NAME,
+        version=config.API_VERSION,
+        description="API REST para evaluación INFO1189 - Implementa principios REST y Clean Architecture",
+        docs_url="/docs",
+        redoc_url="/redoc"
     )
     
     # Configurar CORS (Cross-Origin Resource Sharing)
@@ -26,9 +28,18 @@ def create_application() -> FastAPI:
     
     # Incluir routers de endpoints
     app.include_router(
-    products.router,
-    prefix=f"/api/{config.API_VERSION}",
-    tags=["products"]
+        products.router,
+        prefix=f"/api/{config.API_VERSION}",
+        tags=["products"]
+    )
+
+    # Incluir graphql
+
+    graphql_app = GraphQLRouter(schema_graphql)
+
+    app.include_router(
+        graphql_app,
+        prefix=f"/graphql",
     )
     
     return app
