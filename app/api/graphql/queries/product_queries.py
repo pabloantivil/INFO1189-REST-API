@@ -4,6 +4,7 @@ from typing import List, Optional
 from app.services.database import get_all_products, get_product_by_id
 from app.api.graphql.types.product_types import ProductoType
 from app.models.schemas import Producto
+from app.api.graphql.mutations.product_mutations import Mutation
 
 
 # Resolvers
@@ -23,4 +24,4 @@ class Query:
     product: Optional[ProductoType] = strawberry.field(resolver=resolve_product)
 
 
-schema_graphql = strawberry.Schema(query=Query)
+schema_graphql = strawberry.Schema(query=Query, mutation=Mutation)
