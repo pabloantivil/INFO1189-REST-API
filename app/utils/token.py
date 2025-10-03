@@ -9,7 +9,7 @@ security = HTTPBearer()
 def verificar_token(credentials: HTTPAuthorizationCredentials = Depends(security)):
     token = credentials.credentials
     
-    if token != "secret123":
+    if token != SECRET_KEY:
         raise HTTPException(
             status_code=401,
             detail="Token no valido"

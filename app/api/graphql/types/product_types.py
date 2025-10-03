@@ -1,19 +1,17 @@
 from typing import List
 import strawberry
-from app.models.schemas import Detalle, Especificacion, Producto, ProductoCreate
+from app.models.schemas import Detalles, Especificaciones, Producto, ProductoCreate
 
 # Tipos de salida (queries)
-@strawberry.experimental.pydantic.type(model=Detalle)
+@strawberry.experimental.pydantic.type(model=Detalles)
 class DetalleType:
-    id: strawberry.auto
     atributo: strawberry.auto
     valor: strawberry.auto
 
 
-@strawberry.experimental.pydantic.type(model=Especificacion)
+@strawberry.experimental.pydantic.type(model=Especificaciones)
 class EspecificacionType:
-    id: strawberry.auto
-    categoria: strawberry.auto
+    grupo: strawberry.auto
     detalles: List[DetalleType]
 
 
@@ -22,21 +20,22 @@ class ProductoType:
     id: strawberry.auto
     nombre: strawberry.auto
     precio: strawberry.auto
+    categoria: strawberry.auto
+    marca: strawberry.auto
+    stock: strawberry.auto
     especificaciones: List[EspecificacionType]
 
 
 # Tipos de entrada (mutations) - deben ser Input types en GraphQL
-@strawberry.experimental.pydantic.input(model=Detalle)
+@strawberry.experimental.pydantic.input(model=Detalles)
 class DetalleInputType:
-    id: strawberry.auto
     atributo: strawberry.auto
     valor: strawberry.auto
 
 
-@strawberry.experimental.pydantic.input(model=Especificacion)
+@strawberry.experimental.pydantic.input(model=Especificaciones)
 class EspecificacionInputType:
-    id: strawberry.auto
-    categoria: strawberry.auto
+    grupo: strawberry.auto
     detalles: List[DetalleInputType]
 
 
@@ -44,4 +43,7 @@ class EspecificacionInputType:
 class ProductoCreateType:
     nombre: strawberry.auto
     precio: strawberry.auto
+    categoria: strawberry.auto
+    marca: strawberry.auto
+    stock: strawberry.auto
     especificaciones: List[EspecificacionInputType]

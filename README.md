@@ -1,54 +1,56 @@
 # INFO1189-REST-API 🚀
 
-API REST desarrollada con **FastAPI** para el curso INFO1189. Este proyecto implementa los principios fundamentales de la arquitectura REST, incluyendo Clean Architecture, manejo de schemas con Pydantic, y documentación automática.
+**API REST completa desarrollada con **FastAPI** para el curso INFO1189.
+
+Esta API implementa un sistema de gestión de productos tecnológicos siguiendo los principios fundamentales de la arquitectura REST, incluyendo Clean Architecture, autenticación JWT, GraphQL, y documentación automática.
 
 ## 📖 Descripción del Proyecto
 
-Esta API REST está diseñada siguiendo los **principios REST** y las mejores prácticas de desarrollo:
+### 🎯 **Funcionalidades Principales**
 
-- ✅ **Arquitectura RESTful**: Implementa los 6 principios de REST
-- ✅ **Clean Architecture**: Separación clara de responsabilidades
-- ✅ **Documentación automática**: Con FastAPI y OpenAPI
-- ✅ **Validación de datos**: Usando Pydantic schemas
-- ✅ **Configuración centralizada**: Variables de entorno y settings
-- ✅ **CORS habilitado**: Para desarrollo frontend
-- ✅ **Estructura JSON de máximo 3 niveles**: Siguiendo estándares REST
-- ✅ **Health Check**: Endpoint para monitoreo
+- ✅ **API REST Completa**: 6 endpoints CRUD (GET, POST, GET by ID, PUT, PATCH, DELETE)
+- ✅ **Autenticación JWT**: Protección de endpoints con Bearer Token
+- ✅ **GraphQL**: Queries y Mutations implementadas
+- ✅ **Base de datos**: Productos tecnologicos
+- ✅ **Documentación automática**: Swagger UI y ReDoc
+- ✅ **Validaciones**: Schemas Pydantic con tipos estrictos
+
+### 🏗️ **Arquitectura y Principios**
+
+- ✅ **Clean Architecture**: Separación clara de responsabilidades en capas
+- ✅ **Principios SOLID**: Código mantenible y extensible
+- ✅ **RESTful**: Implementa los 6 principios de REST
+- ✅ **JSON 3 niveles**: Estructura de datos optimizada
+- ✅ **Variables de entorno**: Configuración segura y flexible
+- ✅ **CORS habilitado**: Preparado para integración frontend
 
 ## 🏗️ Arquitectura del Proyecto
 
 ```
 INFO1189-REST-API/
-├── app/
-│   ├── __init__.py
-│   ├── main.py                 # Punto de entrada de la aplicación
-│   ├── api/                    # Capa de API
+├── app/                        # Aplicación principal
+│   ├── main.py                 # Punto de entrada FastAPI
+│   ├── api/                    # 🌐 Capa de presentación (API)
 │   │   └── endpoints/
-│   │       ├── __init__.py
-│   │       └── products.py     # Endpoints de productos
-│   ├── core/                   # Configuración central
-│   │   ├── __init__.py
-│   │   └── config.py          # Settings y configuración
-│   ├── models/                 # Modelos y schemas
-│   │   ├── __init__.py
-│   │   └── schemas.py         # Schemas de Pydantic
-│   └── services/              # Lógica de negocio
-│       ├── __init__.py
-│       └── database.py        # Servicios de base de datos
-├── requirements.txt           # Dependencias del proyecto
-├── README.md                 # Este archivo
-└── README-Instrucciones.md   # Guía teórica de REST
+│   │       └── products.py     # REST endpoints CRUD completos
+│   ├── core/                   # ⚙️ Configuración y utilidades
+│   │   └── config.py           # Variables de entorno y settings
+│   ├── graphql/                # 🔀 GraphQL Schema y Resolvers
+│   │   ├── queries.py          # GraphQL Queries
+│   │   ├── mutations.py        # GraphQL Mutations
+│   │   └── types.py            # GraphQL Types
+│   ├── models/                 # 📋 Modelos y esquemas de datos
+│   │   └── schemas.py          # Pydantic schemas (validación)
+│   ├── services/               # 💾 Lógica de negocio y datos
+│   │   └── database.py         # Base de datos en memoria
+│   └── utils/                  # 🔧 Utilidades y herramientas
+│       └── token.py            # Manejo de tokens JWT
+├── .env.example                # Plantilla de variables de entorno
+├── .gitignore                  # Archivos ignorados por Git
+├── requirements.txt            # Dependencias Python
+├── README.md                   # Este archivo
+└── README-Instrucciones.md                 # Guía teórica REST (material de estudio)
 ```
-
-## 🛠️ Tecnologías Utilizadas
-
-- **FastAPI**: Framework web moderno y rápido para Python
-- **Uvicorn**: Servidor ASGI para desarrollo
-- **Pydantic**: Validación de datos y settings management
-- **Python-JOSE**: Manejo de tokens JWT
-- **Passlib**: Hashing de contraseñas
-- **Strawberry-GraphQL**: Soporte para GraphQL (futuro)
-
 ## 🚀 Instalación y Configuración
 
 ### Prerequisitos
@@ -93,56 +95,165 @@ deactivate
 pip install -r requirements.txt
 ```
 
-### 4. Configurar Variables de Entorno (Opcional)
+### 4. Configurar Variables de Entorno
 
-Crear un archivo `.env` en la raíz del proyecto:
+**⚠️ IMPORTANTE**: Las variables de entorno son obligatorias para el funcionamiento de la aplicación.
 
-```env
-APP_NAME="REST API - Evaluación INFO1189"
-DEBUG=true
-API_VERSION="v1"
-SECRET_KEY="secret123"
-HOST="127.0.0.1"
-PORT=8000
+**Crear archivo `.env`** desde la plantilla:
+
+```powershell
+# Copiar plantilla
+cp .env.example .env
 ```
 
 ## ▶️ Cómo Ejecutar la Aplicación
 
-### Opción 1: Usando Python directamente
+### Método Recomendado: Uvicorn con Reload
 
 ```powershell
-python -m app.main
+# Activar entorno virtual primero
+.\venv\Scripts\Activate.ps1
+
+# Ejecutar la aplicación
+python -m uvicorn app.main:app --reload
 ```
 
-### Opción 2: Usando Uvicorn
-
-```powershell
-uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
-```
-
-### Opción 3: Usando el script de desarrollo
+### Método Alternativo: Python Directo
 
 ```powershell
 python app/main.py
 ```
 
-## 🧪 Testing
+### ✅ Verificar que Funciona
 
-Para probar la API, puedes usar:
+La aplicación estará disponible en:
 
-1. **Swagger UI**: Navega a `http://localhost:8000/docs`
-2. **curl**:
-   ```powershell
-   curl http://localhost:8000/api/v1/health
-   ```
-3. **Postman** o **Insomnia**
+- **🏠 Página principal**: http://localhost:8000
+- **📚 Documentación Swagger**: http://localhost:8000/docs
+- **📖 Documentación ReDoc**: http://localhost:8000/redoc
+- **❤️ Health Check**: http://localhost:8000/api/v1/health
 
-## 📚 Recursos Adicionales
+## 🧪 Testing y Uso de la API
 
-- [Documentación de FastAPI](https://fastapi.tiangolo.com/)
-- [Guía de REST API](./README-Instrucciones.md)
-- [Principios REST](https://restfulapi.net/)
+### **1. 📚 Documentación Interactiva (Recomendado)**
+
+Navega a `http://localhost:8000/docs` para:
+
+- ✅ Ver todos los endpoints disponibles
+- ✅ Probar cada endpoint directamente
+- ✅ Ver ejemplos de JSON
+- ✅ Configurar autenticación JWT
+
+### **2. 🔐 Autenticación JWT**
+
+Para endpoints protegidos (POST):
+
+1. En Swagger UI, hacer clic en **"Authorize"**
+2. Introducir: token designado
+3. Hacer clic en **"Authorize"**
+
+### **3. 📊 Endpoints Disponibles**
+
+| Método   | Endpoint                | Descripción                  | Protegido |
+| -------- | ----------------------- | ---------------------------- | --------- |
+| `GET`    | `/api/v1/products`      | Listar todos los productos   | ❌        |
+| `GET`    | `/api/v1/products/{id}` | Obtener producto por ID      | ❌        |
+| `POST`   | `/api/v1/products`      | Crear nuevo producto         | ✅ JWT    |
+| `PUT`    | `/api/v1/products/{id}` | Actualizar producto completo | ❌        |
+| `PATCH`  | `/api/v1/products/{id}` | Actualizar producto parcial  | ❌        |
+| `DELETE` | `/api/v1/products/{id}` | Eliminar producto            | ❌        |
+
+### **4. 🔀 GraphQL**
+
+Accede a GraphQL Playground en: `http://localhost:8000/graphql`
+
+**Ejemplo Query:**
+
+```graphql
+query GetProducts {
+  products {
+    id
+    nombre
+    precio
+    categoria
+  }
+}
+```
+
+**Ejemplo Mutation:**
+
+```graphql
+mutation CreateProduct($input: ProductInput!) {
+  createProduct(input: $input) {
+    id
+    nombre
+    precio
+  }
+}
+```
+
+### **5. 💻 Herramientas Externas**
+
+- **Postman**: Importar colección desde `/docs`
+- **Insomnia**: Soporte nativo para OpenAPI
+- **curl**: Ejemplos en la documentación
+
+## � Base de Datos
+
+### **📊 Estructura de Datos (3 Niveles)**
+
+```json
+{
+  "id": 1, // Nivel 1: Información básica
+  "nombre": "MacBook Air M2 13' 256GB",
+  "precio": 1299990.0,
+  "categoria": "Laptops",
+  "marca": "Apple",
+  "stock": 15,
+  "especificaciones": [
+    // Nivel 2: Grupos de especificaciones
+    {
+      "grupo": "Procesador",
+      "detalles": [
+        // Nivel 3: Detalles específicos
+        { "atributo": "Chip", "valor": "Apple M2 de 8 núcleos" },
+        { "atributo": "GPU", "valor": "8 núcleos integrados" }
+      ]
+    }
+  ]
+}
+```
+
+## 🤝 Equipo de Desarrollo
+
+- **Pablo Antivil**
+- **Sion Arancibia**
+
+## 📚 Recursos y Referencias
+
+### **📖 Documentación Oficial**
+
+- [FastAPI Documentation](https://fastapi.tiangolo.com/)
+- [Pydantic Documentation](https://docs.pydantic.dev/)
+- [Strawberry GraphQL](https://strawberry.rocks/)
+
+### **🎓 Material del Curso**
+
+- [Guía Teórica REST](./README-Instrucciones.md) - Conceptos fundamentales
+- [Principios REST](https://restfulapi.net/) - Referencia externa
+
+### **🔧 Herramientas Recomendadas**
+
+- **VS Code** - Editor con extensiones FastAPI
+- **Postman** - Testing de APIs
+- **Git** - Control de versiones
 
 ---
 
-_Desarrollado para INFO1189 - Universidad Católica de Temuco_
+## 📄 Licencia
+
+Este proyecto fue desarrollado con fines educativos para el curso **INFO1189** de la **Universidad Católica de Temuco**.
+
+---
+
+**🚀 REST API - Desarrollado con FastAPI para INFO1189**
