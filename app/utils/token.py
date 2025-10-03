@@ -1,6 +1,6 @@
 from fastapi import Request, HTTPException
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
-from app.core.config import SECRET_KEY, ALGORITHM
+from app.core.config import SECRET_KEY
 
 # https://fastapi.tiangolo.com/reference/security/#fastapi.security.HTTPBearer--usage
 
