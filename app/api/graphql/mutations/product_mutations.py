@@ -1,7 +1,6 @@
 import strawberry
 from app.api.graphql.types.product_types import ProductoType, ProductoCreateType
 from app.services.database import create_product
-from app.services.database import db
 
 @strawberry.type
 class Mutation:

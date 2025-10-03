@@ -1,3 +1,4 @@
+from collections.abc import AsyncIterator
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from app.core import config
@@ -5,7 +6,18 @@ from app.api.rest.endpoints import products
 from app.api.graphql.queries.product_queries import schema_graphql
 from strawberry.fastapi import GraphQLRouter
 
+from fastapi_cache.backends.inmemory import InMemoryBackend
+from fastapi_cache import FastAPICache
+from contextlib import asynccontextmanager
+
+
 def create_application() -> FastAPI:
+    @asynccontextmanager
+    async def lifespan(_: FastAPI) -> AsyncIterator[None]:
+        FastAPICache.init(InMemoryBackend(), prefix="fastapi-cache")
+        yield
+
+
     """
     Factory function para crear la aplicación FastAPI.
     """
@@ -14,8 +26,10 @@ def create_application() -> FastAPI:
         version=config.API_VERSION,
         description="API REST para evaluación INFO1189 - Implementa principios REST y Clean Architecture",
         docs_url="/docs",
-        redoc_url="/redoc"
+        redoc_url="/redoc",
+        lifespan=lifespan
     )
+
     
     # Configurar CORS (Cross-Origin Resource Sharing)
     app.add_middleware(

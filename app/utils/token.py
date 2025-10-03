@@ -15,7 +15,7 @@ class JWTBearer(HTTPBearer):
         if credentials:
             if not credentials.scheme == "Bearer":
                 raise HTTPException(status_code=403, detail="Invalid authentication scheme.")
-            if credentials.credentials != SECRET_KEY:
+            if not credentials.credentials == SECRET_KEY:
                 raise HTTPException(status_code=403, detail="Invalid token")
             return credentials.credentials
         else:
