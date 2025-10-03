@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException, Response
 from typing import List
 from app.models.schemas import Producto, ProductoCreate
 from app.services.database import get_all_products, get_product_by_id, create_product
-from app.utils.token import JWTBearer
+from app.utils.token import verificar_token
 from fastapi_cache.decorator import cache
 
 # Crear el router
@@ -30,9 +30,7 @@ async def obtener_producto_por_id(product_id: int):
     return producto
 
 # ENDPOINT 3: POST /products - Crear un nuevo producto
-# Con inyeccion de dependencias https://testdriven.io/blog/fastapi-jwt-auth/
-
-@router.post("/products", dependencies=[Depends(JWTBearer())], response_model=Producto, status_code=201)
-async def crear_producto(producto_data: ProductoCreate):
+@router.post("/products", response_model=Producto, status_code=201)
+async def crear_producto(producto_data: ProductoCreate, token_data: dict = Depends(verificar_token)):
     nuevo_producto = create_product(producto_data.model_dump())
     return nuevo_producto
