@@ -1,23 +1,27 @@
 from pydantic import BaseModel
 from typing import List
 
-class Detalle(BaseModel):
+class Author(BaseModel):
     id: int
-    atributo: str
-    valor: str
+    name: str
+    age: int
 
-class Especificacion(BaseModel):
+class SubCategory(BaseModel):
     id: int
-    categoria: str
-    detalles: List[Detalle]
+    name: str
 
-class Producto(BaseModel):
+class Category(BaseModel):
     id: int
-    nombre: str
-    precio: float
-    especificaciones: List[Especificacion]
+    name: str
+    subcategories: List[SubCategory]
+    
+class Book(BaseModel):
+    id: int
+    title: str
+    date: str
+    price: int
+    authors: List[Author] 
+    category: Category
 
-class ProductoCreate(BaseModel):
-    nombre: str
-    precio: float
-    especificaciones: List[Especificacion] = []
+
+

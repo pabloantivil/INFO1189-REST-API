@@ -2,9 +2,9 @@ from collections.abc import AsyncIterator
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from app.core import config
-from app.api.rest.endpoints import products
-from app.api.graphql.queries.product_queries import schema_graphql
-from strawberry.fastapi import GraphQLRouter
+from app.api.rest.endpoints import books
+#from app.api.graphql.queries.product_queries import schema_graphql
+#from strawberry.fastapi import GraphQLRouter
 
 from fastapi_cache.backends.inmemory import InMemoryBackend
 from fastapi_cache import FastAPICache
@@ -42,19 +42,19 @@ def create_application() -> FastAPI:
     
     # Incluir routers de endpoints
     app.include_router(
-        products.router,
+        books.router,
         prefix=f"/api/{config.API_VERSION}",
         tags=["products"]
     )
 
     # Incluir graphql
 
-    graphql_app = GraphQLRouter(schema_graphql)
+    #graphql_app = GraphQLRouter(schema_graphql)
 
-    app.include_router(
-        graphql_app,
-        prefix=f"/graphql",
-    )
+    #app.include_router(
+    #    graphql_app,
+    #    prefix=f"/graphql",
+    #)
     
     return app
 
