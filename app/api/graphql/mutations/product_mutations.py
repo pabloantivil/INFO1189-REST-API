@@ -1,24 +1,13 @@
 import strawberry
 from app.api.graphql.types.product_types import ProductoType, ProductoCreateType
+from app.models.schemas import Producto
 from app.services.database import create_product
 
 @strawberry.type
 class Mutation:
     @strawberry.mutation
     def create_product(self, producto: ProductoCreateType) -> ProductoType:
-        # Convertir ProductoCreateType a dict compatible con create_product
-        specs = []
-        for s in getattr(producto, "especificaciones", []):
-            detalles = []
-            for d in getattr(s, "detalles", []):
-                detalles.append({"id": getattr(d, "id", None), "atributo": getattr(d, "atributo", None), "valor": getattr(d, "valor", None)})
-            specs.append({"id": getattr(s, "id", None), "categoria": getattr(s, "categoria", None), "detalles": detalles})
-
-        payload = {
-            "nombre": getattr(producto, "nombre", None),
-            "precio": getattr(producto, "precio", None),
-            "especificaciones": specs,
-        }
-
-        new = create_product(payload)
-        return ProductoType(id=new.get("id"), nombre=new.get("nombre"), precio=new.get("precio"), especificaciones=new.get("especificaciones", []))
+        """Crear un nuevo producto via GraphQL."""
+        # Aprovechar la conversión automática de Pydantic
+        new_product = create_product(producto.to_pydantic().model_dump())
+        return Producto(**new_product)

@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException, Response
 from typing import List
 from app.models.schemas import Producto, ProductoCreate
-from app.services.database import get_all_products, get_product_by_id, create_product
+from app.services.database import delete_product, get_all_products, get_product_by_id, create_product, patch_product, update_product
 from app.utils.token import verificar_token
 from fastapi_cache.decorator import cache
 
@@ -10,15 +10,14 @@ router = APIRouter()
 
 # ENDPOINT 1: GET /products - Obtener todos los productos
 @router.get("/products", response_model=List[Producto])
-@cache(expire=60) # 60 seg de caché
+@cache(expire=10) # 10 seg de caché
 async def obtener_todos_productos(response: Response):
-    #response.headers["Cache-Control"] = "max-age=3600"  # cacheable por 1 hora
     productos = get_all_products()
     return productos
 
 # ENDPOINT 2: GET /products/{id} - Obtener un producto específico
 @router.get("/products/{product_id}", response_model=Producto)
-@cache(expire=60) # 60 seg de caché
+@cache(expire=10) # 10 seg de caché
 async def obtener_producto_por_id(product_id: int):
     producto = get_product_by_id(product_id)
     
@@ -34,3 +33,42 @@ async def obtener_producto_por_id(product_id: int):
 async def crear_producto(producto_data: ProductoCreate, token_data: dict = Depends(verificar_token)):
     nuevo_producto = create_product(producto_data.model_dump())
     return nuevo_producto
+
+# PUT /products/{id} - Actualizar producto completo
+@router.put("/products/{product_id}", response_model=Producto)
+async def update_product_endpoint(product_id: int, producto: ProductoCreate):
+    """Actualiza un producto completamente."""
+
+    product = get_product_by_id(product_id)
+    if not product:
+        raise HTTPException(
+            status_code=404,
+            detail=f"Producto con ID {product_id} no encontrado"
+        )
+    
+    return update_product(product_id, producto.model_dump())
+
+# PATCH /products/{id} - Actualizar producto parcialmente
+@router.patch("/products/{product_id}", response_model=Producto)
+async def patch_product_endpoint(product_id: int, changes: dict):
+    """Actualiza un producto parcialmente."""
+    product = get_product_by_id(product_id)
+    if not product:
+        raise HTTPException(
+            status_code=404,
+            detail=f"Producto con ID {product_id} no encontrado"
+        )
+    return patch_product(product_id, changes)
+
+# DELETE /products/{id} - Eliminar producto
+@router.delete("/products/{product_id}",status_code=204)
+async def delete_product_endpoint(product_id: int):
+    """Elimina un producto."""
+    product = get_product_by_id(product_id)
+    if not product:
+        raise HTTPException(
+            status_code=404,
+            detail=f"Producto con ID {product_id} no encontrado"
+        )
+    delete_product(product_id)
+    return None

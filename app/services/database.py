@@ -205,3 +205,43 @@ def create_product(product_data):
     
     db.append(new_product)
     return new_product
+
+def update_product(product_id: int, product_data: dict) -> dict:
+    """Actualizar un producto completamente."""
+    for i, p in enumerate(db):
+        if p["id"] == product_id:
+            updated = {
+                "id": product_id,
+                "nombre": product_data["nombre"],
+                "precio": product_data["precio"],
+                "categoria": product_data["categoria"],        
+                "marca": product_data["marca"],                  
+                "stock": product_data["stock"],                
+                "especificaciones": product_data.get("especificaciones", [])
+            }
+            db[i] = updated
+            return updated
+    return None
+
+def patch_product(product_id: int, changes: dict) -> dict:
+    """Actualizar un producto parcialmente."""
+    for i, p in enumerate(db):
+        if p["id"] == product_id:
+            patched = p.copy()
+            if "nombre" in changes:
+                patched["nombre"] = changes["nombre"]
+            if "precio" in changes:
+                patched["precio"] = changes["precio"]
+            if "especificaciones" in changes:
+                patched["especificaciones"] = changes["especificaciones"]
+            db[i] = patched
+            return patched
+    return None
+
+def delete_product(product_id: int) -> bool:
+    """Eliminar un producto."""
+    for i, p in enumerate(db):
+        if p["id"] == product_id:
+            db.pop(i)
+            return True
+    return False
