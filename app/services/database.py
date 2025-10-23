@@ -1,6 +1,14 @@
 # Aquí se definirán las funciones para interactuar con la base de datos
 # Por simplicidad, usaremos una lista en memoria como "base de datos"
 
+from datetime import datetime, timezone
+
+
+def _get_utc_timestamp() -> str:
+    """Helper para generar timestamp UTC en formato ISO8601"""
+    return datetime.now(timezone.utc).isoformat()
+
+
 # Base de datos de productos tecnológicos
 db = [
     {
@@ -10,6 +18,10 @@ db = [
         "categoria": "Laptops",
         "marca": "Apple",
         "stock": 15,
+        "created_at": "2025-09-15T10:30:00+00:00",
+        "updated_at": "2025-10-20T14:20:00+00:00",
+        "created_by": "admin@techstore.cl",
+        "updated_by": "admin@techstore.cl",
         "especificaciones": [
             {
                 "grupo": "Procesador",
@@ -44,6 +56,10 @@ db = [
         "categoria": "Smartphones",
         "marca": "Apple",
         "stock": 8,
+        "created_at": "2025-09-18T09:15:00+00:00",
+        "updated_at": "2025-10-18T11:45:00+00:00",
+        "created_by": "admin@techstore.cl",
+        "updated_by": "admin@techstore.cl",
         "especificaciones": [
             {
                 "grupo": "Pantalla",
@@ -58,7 +74,8 @@ db = [
                 "detalles": [
                     {"atributo": "Principal", "valor": "48MP f/1.78"},
                     {"atributo": "Ultra angular", "valor": "13MP f/2.2"},
-                    {"atributo": "Teleobjetivo", "valor": "12MP f/2.8 (3x zoom)"}
+                    {"atributo": "Teleobjetivo",
+                        "valor": "12MP f/2.8 (3x zoom)"}
                 ]
             },
             {
@@ -78,6 +95,10 @@ db = [
         "categoria": "Smartphones",
         "marca": "Samsung",
         "stock": 12,
+        "created_at": "2025-09-20T13:22:00+00:00",
+        "updated_at": "2025-10-21T16:30:00+00:00",
+        "created_by": "admin@techstore.cl",
+        "updated_by": "inventory@techstore.cl",
         "especificaciones": [
             {
                 "grupo": "Pantalla",
@@ -91,7 +112,8 @@ db = [
                 "grupo": "Cámara",
                 "detalles": [
                     {"atributo": "Principal", "valor": "200MP f/1.7 OIS"},
-                    {"atributo": "Teleobjetivo", "valor": "50MP f/3.4 (5x zoom óptico)"},
+                    {"atributo": "Teleobjetivo",
+                        "valor": "50MP f/3.4 (5x zoom óptico)"},
                     {"atributo": "Ultra angular", "valor": "12MP f/2.2"}
                 ]
             },
@@ -105,74 +127,6 @@ db = [
             }
         ]
     },
-    {
-        "id": 4,
-        "nombre": "PlayStation 5 Slim 1TB",
-        "precio": 599990.00,
-        "categoria": "Consolas",
-        "marca": "Sony",
-        "stock": 5,
-        "especificaciones": [
-            {
-                "grupo": "Hardware",
-                "detalles": [
-                    {"atributo": "CPU", "valor": "AMD Zen 2 de 8 núcleos a 3.5GHz"},
-                    {"atributo": "GPU", "valor": "AMD RDNA 2 con 10.28 TFLOPs"},
-                    {"atributo": "RAM", "valor": "16GB GDDR6"}
-                ]
-            },
-            {
-                "grupo": "Almacenamiento",
-                "detalles": [
-                    {"atributo": "SSD interno", "valor": "1TB NVMe PCIe 4.0"},
-                    {"atributo": "Velocidad", "valor": "5.5GB/s sin comprimir"},
-                    {"atributo": "Expandible", "valor": "Slot M.2 adicional"}
-                ]
-            },
-            {
-                "grupo": "Multimedia",
-                "detalles": [
-                    {"atributo": "Resolución", "valor": "Hasta 8K (7680x4320)"},
-                    {"atributo": "HDR", "valor": "HDR10, HDR10+, Dolby Vision"},
-                    {"atributo": "Audio", "valor": "Dolby Atmos, DTS:X"}
-                ]
-            }
-        ]
-    },
-    {
-        "id": 5,
-        "nombre": "Monitor Gaming ASUS ROG Swift 27' 165Hz",
-        "precio": 449990.00,
-        "categoria": "Monitores",
-        "marca": "ASUS",
-        "stock": 7,
-        "especificaciones": [
-            {
-                "grupo": "Pantalla",
-                "detalles": [
-                    {"atributo": "Tamaño", "valor": "27 pulgadas"},
-                    {"atributo": "Resolución", "valor": "2560x1440 (QHD)"},
-                    {"atributo": "Panel", "valor": "IPS con 1ms GTG"}
-                ]
-            },
-            {
-                "grupo": "Gaming",
-                "detalles": [
-                    {"atributo": "Frecuencia", "valor": "165Hz nativo"},
-                    {"atributo": "Adaptive Sync", "valor": "G-SYNC Compatible"},
-                    {"atributo": "HDR", "valor": "HDR10 certificado"}
-                ]
-            },
-            {
-                "grupo": "Conectividad",
-                "detalles": [
-                    {"atributo": "DisplayPort", "valor": "1.4 x1"},
-                    {"atributo": "HDMI", "valor": "2.0 x2"},
-                    {"atributo": "USB Hub", "valor": "3.0 x2"}
-                ]
-            }
-        ]
-    }
 ]
 
 
@@ -181,6 +135,7 @@ def get_all_products():
     """Obtener todos los productos"""
     return db
 
+
 def get_product_by_id(product_id: int):
     """Obtener un producto por ID"""
     for product in db:
@@ -188,55 +143,87 @@ def get_product_by_id(product_id: int):
             return product
     return None
 
-def create_product(product_data):
+
+def create_product(product_data, created_by: str = None):
     """Crear un nuevo producto"""
     # Generar nuevo ID
     new_id = max([p["id"] for p in db]) + 1 if db else 1
-    
+
+    timestamp = _get_utc_timestamp()
+
     new_product = {
         "id": new_id,
         "nombre": product_data["nombre"],
         "precio": product_data["precio"],
-        "categoria": product_data["categoria"],        
-        "marca": product_data["marca"],                  
-        "stock": product_data["stock"],                
-        "especificaciones": product_data.get("especificaciones", [])
+        "categoria": product_data["categoria"],
+        "marca": product_data["marca"],
+        "stock": product_data["stock"],
+        "especificaciones": product_data.get("especificaciones", []),
+        "created_at": timestamp,
+        "updated_at": timestamp,
+        "created_by": created_by,
+        "updated_by": created_by
     }
-    
+
     db.append(new_product)
     return new_product
 
-def update_product(product_id: int, product_data: dict) -> dict:
+
+def update_product(product_id: int, product_data: dict, updated_by: str = None) -> dict:
     """Actualizar un producto completamente."""
     for i, p in enumerate(db):
         if p["id"] == product_id:
+            # Preservar campos de auditoría originales
+            created_at_original = p["created_at"]
+            created_by_original = p["created_by"]
+
             updated = {
                 "id": product_id,
                 "nombre": product_data["nombre"],
                 "precio": product_data["precio"],
-                "categoria": product_data["categoria"],        
-                "marca": product_data["marca"],                  
-                "stock": product_data["stock"],                
-                "especificaciones": product_data.get("especificaciones", [])
+                "categoria": product_data["categoria"],
+                "marca": product_data["marca"],
+                "stock": product_data["stock"],
+                "especificaciones": product_data.get("especificaciones", []),
+                "created_at": created_at_original,  # NO cambia
+                "updated_at": _get_utc_timestamp(),  # Actualizar timestamp
+                "created_by": created_by_original,  # NO cambia
+                "updated_by": updated_by  # Actualizar actor
             }
             db[i] = updated
             return updated
     return None
 
-def patch_product(product_id: int, changes: dict) -> dict:
+
+def patch_product(product_id: int, changes: dict, updated_by: str = None) -> dict:
     """Actualizar un producto parcialmente."""
     for i, p in enumerate(db):
         if p["id"] == product_id:
             patched = p.copy()
+
+            # Aplicar cambios permitidos
             if "nombre" in changes:
                 patched["nombre"] = changes["nombre"]
             if "precio" in changes:
                 patched["precio"] = changes["precio"]
+            if "categoria" in changes:
+                patched["categoria"] = changes["categoria"]
+            if "marca" in changes:
+                patched["marca"] = changes["marca"]
+            if "stock" in changes:
+                patched["stock"] = changes["stock"]
             if "especificaciones" in changes:
                 patched["especificaciones"] = changes["especificaciones"]
+
+            # Actualizar metadatos de auditoría
+            patched["updated_at"] = _get_utc_timestamp()
+            patched["updated_by"] = updated_by
+            # created_at y created_by NO cambian
+
             db[i] = patched
             return patched
     return None
+
 
 def delete_product(product_id: int) -> bool:
     """Eliminar un producto."""

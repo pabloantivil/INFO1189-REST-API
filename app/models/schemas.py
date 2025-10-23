@@ -1,5 +1,7 @@
 from pydantic import BaseModel
-from typing import List
+from typing import List, Optional
+from datetime import datetime
+
 
 class Detalles(BaseModel):
     atributo: str
@@ -17,6 +19,11 @@ class Producto(BaseModel):
     marca: str
     stock: int
     especificaciones: List[Especificaciones]
+    created_at: str 
+    updated_at: str  
+    created_by: Optional[str] = None # Identificador del creador
+    updated_by: Optional[str] = None # Identificador del último modificador
+
 
 class ProductoCreate(BaseModel):
     nombre: str

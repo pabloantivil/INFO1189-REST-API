@@ -3,6 +3,8 @@ import strawberry
 from app.models.schemas import Detalles, Especificaciones, Producto, ProductoCreate
 
 # Tipos de salida (queries)
+
+
 @strawberry.experimental.pydantic.type(model=Detalles)
 class DetalleType:
     atributo: strawberry.auto
@@ -24,6 +26,10 @@ class ProductoType:
     marca: strawberry.auto
     stock: strawberry.auto
     especificaciones: List[EspecificacionType]
+    created_at: strawberry.auto
+    updated_at: strawberry.auto
+    created_by: strawberry.auto
+    updated_by: strawberry.auto
 
 
 # Tipos de entrada (mutations) - deben ser Input types en GraphQL
