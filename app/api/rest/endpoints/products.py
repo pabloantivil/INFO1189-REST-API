@@ -15,7 +15,7 @@ router = APIRouter()
 
 
 @router.get("/products", response_model=List[Producto])
-@cache(expire=10)
+#@cache(expire=10)
 async def obtener_todos_productos(response: Response, request: Request):
     """
     Obtiene todos los productos con protección contra:
@@ -66,7 +66,7 @@ async def obtener_todos_productos(response: Response, request: Request):
 
 
 @router.get("/products/{product_id}", response_model=Producto)
-@cache(expire=10)
+#@cache(expire=10)
 async def obtener_producto_por_id(product_id: int, request: Request):
     """
     Obtiene un producto específico con protección contra:

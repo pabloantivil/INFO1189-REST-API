@@ -8,3 +8,5 @@ strawberry-graphql[fastapi]
 pydantic-settings
 python-dotenv
 fastapi-cache2
+pytest
+httpx
