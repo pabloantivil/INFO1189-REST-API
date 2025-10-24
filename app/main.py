@@ -5,11 +5,15 @@ from app.core import config
 from app.api.rest.endpoints import products
 from app.api.graphql.queries.product_queries import schema_graphql
 from strawberry.fastapi import GraphQLRouter
-
 from fastapi_cache.backends.inmemory import InMemoryBackend
 from fastapi_cache import FastAPICache
 from contextlib import asynccontextmanager
-
+from app.middleware.security import SecurityMiddleware
+from app.core.services.security_services import (
+    InMemoryRateLimiter,
+    FileSecurityLogger,
+    SSRFURLValidator
+)
 
 def create_application() -> FastAPI:
     @asynccontextmanager
@@ -30,14 +34,26 @@ def create_application() -> FastAPI:
         lifespan=lifespan
     )
 
-    
-    # Configurar CORS (Cross-Origin Resource Sharing)
+    # CORS (Cross-Origin Resource Sharing) con configuración segura
     app.add_middleware(
         CORSMiddleware,
-        allow_origins=["*"],  # En producción usar dominios específicos
+        allow_origins=["http://localhost:3000", "http://localhost:8000"],  # Incluir localhost para docs
         allow_credentials=True,
-        allow_methods=["*"],
+        allow_methods=["GET", "POST", "PUT", "DELETE", "PATCH", "HEAD", "OPTIONS"],
         allow_headers=["*"],
+        expose_headers=["*"],
+        max_age=600,
+    )
+    
+    # Middleware de seguridad personalizado
+    app.add_middleware(
+        SecurityMiddleware,
+        rate_limiter=InMemoryRateLimiter(requests_per_second=10),
+        security_logger=FileSecurityLogger(log_file="security.log"),
+        url_validator=SSRFURLValidator(
+            allowed_schemes=['https', 'http'],  # Permitir http para desarrollo local
+            allowed_hosts=['localhost', '127.0.0.1'] 
+        )
     )
     
     # Incluir routers de endpoints
